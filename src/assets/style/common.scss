@@ -1,0 +1,13 @@
+
+.txt-ellipsis{
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.el-form-item {
+  // min-height: 32px !important;
+  .el-form-item__content{
+    min-height: 32px !important;
+  }
+}

@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="xbsj-labels" content="Earth示例"></meta>
+    <title>OD线集群-北京公交线路</title>
+    <!-- 0 引入js文件：XbsjEarth.js和vue.min.js -->
+    <script src="../../XbsjCesium/Cesium.js"></script>
+    <link rel="stylesheet" href="../../XbsjCesium/Widgets/widgets.css">
+    <script src="../../XbsjEarth/XbsjEarth.js"></script>
+    <script src="./scripts/vue.min.js"></script>
+    <style>
+        html, body {
+            width: 100%;
+            height: 100%;
+            margin: 0px;
+            padding: 0px;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="vueApp" style="width: 100%; height: 100%; background: grey; position: relative;">
+        <earth-comp></earth-comp>
+    </div>
+
+    <script>
+        function loadData(dataFunc) {
+            Cesium.Resource.fetchJson('../assets/odlines/lines-bus.json').then(function(data) {
+                var timeDuration = 10.0;
+                var moveBaseDuration = 4.0;
+            
+                var hStep = 300 / (data.length - 1);
+            
+                // var busLines = [].concat.apply([], data.map(function (busLine, idx) {
+                var busLines = [];
+                data.map(function (busLine, idx) {
+                    var prevPt;
+                    var points = [];
+                    for (var i = 0; i < busLine.length; i += 2) {
+                        var pt = [busLine[i], busLine[i + 1]];
+                        if (i > 0) {
+                            pt = [
+                                prevPt[0] + pt[0],
+                                prevPt[1] + pt[1]
+                            ];
+                        }
+                        prevPt = pt;
+            
+                        // points.push([pt[0] / 1e4, pt[1] / 1e4]);
+                        var longitude = pt[0] / 1e4 * Math.PI / 180.0;
+                        var latitude = pt[1] / 1e4 * Math.PI / 180.0;
+                        // var cart = Cesium.Cartesian3.fromDegrees(longitude, latitude, 100.0);
+                        points.push([longitude, latitude]);
+                    }
+            
+                    busLines.push({
+                        //startPos: airports[route[1]].coord,
+                        //endPos: airports[route[2]].coord,
+                        positions: points,
+                        color: [Math.random() * 0.5 + 0.5, Math.random() * 0.8 + 0.2, 0.0, 1.0],
+                        width: 2.0,
+                        startTime: timeDuration * Math.random(),
+                        duration: moveBaseDuration + 1.0 * Math.random()
+                    });
+                });
+
+                // var busLinesCount = busLines.length;
+                // var busLinesPointsCount = 0;
+                // busLines.forEach(function (busLine) {
+                //     busLinesPointsCount += busLine.positions.length;
+                // });
+                // console.log('busLinesCount: ' + busLinesCount);
+                // console.log('busLinesPointsCount: ' + busLinesPointsCount);
+            
+                // var routePaths = busLines;
+                dataFunc(busLines, timeDuration);
+            });
+        }
+
+        // 1 创建Earth的vue组件
+        var EarthComp = {
+            template: `
+                <div style="width: 100%; height: 100%">
+                    <div ref="earthContainer" style="width: 100%; height: 100%">
+                    </div>
+                    <div style="position: absolute; left: 18px; top: 18px">
+                        <div class="box" style="position: absolute; left: 18px; top: 18px; color: white; background: rgba(0, 0, 0, 0.6); padding: 20px; border-radius: 25px;min-width:180px; font-size:24px; font-family: 宋体;">
+                            <span>帧率：{{fps}}帧/秒</span><br/>
+                            <span>时间：{{elapsedTime | numFilter}}毫秒</span><br/>
+                        </div>
+                    </div>
+                </div>
+            `,
+            data() { 
+                return {
+                    _earth: undefined, // 注意：Earth和Cesium的相关变量放在vue中，必须使用下划线作为前缀！
+                    _bgImagery: undefined,
+                    fps: 0,
+                    elapsedTime: 0
+                };
+            },
+            // 1.1 资源创建
+            mounted() {
+                // 1.1.1 创建地球
+                var earth = new XE.Earth(this.$refs.earthContainer);
+
+                // 1.1.2 添加默认地球影像
+                earth.sceneTree.root = {
+                    "children": [
+                        {
+                            "czmObject": {
+                                "name": "默认离线影像",
+                                "xbsjType": "Imagery",
+                                "xbsjImageryProvider": {
+                                    "createTileMapServiceImageryProvider": {
+                                        "url": XE.HTML.cesiumDir + 'Assets/Textures/NaturalEarthII',
+                                        "fileExtension": 'jpg',
+                                    },
+                                    "type": "createTileMapServiceImageryProvider"
+                                },
+                                "brightness": 0.1,
+                            }
+                        },
+                    ]
+                };
+
+                const position = [
+                    2.033082406731791,
+                    0.6932973408430964,
+                    25375.718759865656
+                ];
+                const rotation = [
+                    5.907289830535223,
+                    -0.907166753023871,
+                    0.00031189810712373145
+                ];
+                earth.camera.position = position;
+                earth.camera.rotation = rotation;
+
+                this._earth = earth;
+
+                this._odlines = new XE.Obj.ODLines(earth);
+                this._odlines.translucentPass = false;
+                this._odlines.color = [1, 1, 1, 1];
+
+                loadData((data, timeDuration) => {
+                    this._odlines.data = data;
+                    this._odlines.timeDuration = timeDuration;
+                    this._odlines.playing = true;
+                });
+
+                // 1.1.3 数据绑定
+                // 双向绑定的属性，如果一方发生变化，另一方同样会跟随变化
+                this._fpsUnbind = XE.MVVM.bind(this, 'fps', earth.status, 'fps');
+                this._elapsedTimeUnbind = XE.MVVM.bind(this, 'elapsedTime', earth.status, 'elapsedTime');
+
+                // only for Debug
+                window.earth = earth;
+                window.odlines = this._odlines;
+            },
+            filters: {
+                numFilter(value) {
+                    // 截取当前数据到小数点后两位
+                    let realVal = parseFloat(value).toFixed(1)
+                    return realVal
+                }
+            },
+            // 1.2 资源销毁
+            beforeDestroy() {
+                // vue程序销毁时，需要清理相关资源
+                this._fpsUnbind = this._fpsUnbind && this._fpsUnbind();
+                this._elapsedTimeUnbind = this._elapsedTimeUnbind && this._elapsedTimeUnbind();
+                this._earth = this._earth && this._earth.destroy();
+            },
+        }
+
+        // 2 创建vue程序
+        // XE.ready()用来加载Cesium.js等相关资源
+        XE.ready().then(() => {
+            var app = new Vue({
+                el: '#vueApp',
+                components: {
+                    EarthComp,
+                },
+            });
+        });
+    </script>
+</body>
+
+</html>

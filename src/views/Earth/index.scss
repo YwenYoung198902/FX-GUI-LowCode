@@ -1,0 +1,117 @@
+.earth-wrap {
+    display: flex;
+    width: 100%;
+    height: calc(100% - 40px);
+    background: #25262A;
+
+
+    .earth-silder {
+        width: 200px;
+        height: 100%;
+        position: relative;
+        border-right: 1px solid #000;
+
+        .earth-list {
+            width: 200px;
+            opacity: 1;
+            height: 100%;
+            overflow: auto;
+            height: calc(100% - 120px);
+
+
+            .earth-item {
+                .earth-item_img {
+                    width: 160px;
+                    height: 90px;
+                    border-radius: 10px;
+                    overflow: hidden;
+                    margin: 20px auto 10px;
+                    position: relative;
+                    cursor: pointer;
+
+                    .earth-item_btn {
+                        position: absolute;
+                        right: 0;
+                        border-radius: 0px 10px 0px 10px;
+                        z-index: 99;
+                        background: rgba(0, 0, 0, 0.8);
+                        width: 40px;
+                        height: 24px;
+                        justify-content: center;
+                        align-items: center;
+                        display: none;
+                        transform: 0.3s;
+
+                        img {
+                            width: 14px;
+                            height: 14px;
+                        }
+                    }
+
+                    &:hover {
+                        .earth-item_btn {
+                            display: flex;
+                        }
+                    }
+
+                    &.active {
+                        border: 1px solid #2258AE;
+                    }
+
+                    img {
+                        width: 100%;
+                    }
+                }
+
+                .earth-item_title {
+                    text-align: center;
+                    font-family: Source Han Sans CN;
+                    font-size: 14px;
+                    font-weight: normal;
+                    letter-spacing: 0em;
+                    color: #999999;
+                }
+            }
+        }
+
+
+        .add-btn {
+            position: absolute;
+            bottom: 30px;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            .el-button {
+                padding: 12px 42px;
+            }
+        }
+    }
+
+
+    .earth-content {
+        flex: 1;
+        position: relative;
+        width: 100%;
+    }
+
+    .xbsj-template {
+        background-color: #25262A;
+    }
+
+
+    .xbsj-title-item-on,
+    .xbsj-title-ul li:hover {
+        background-color: #25262A;
+    }
+
+    // 1A1B1D
+    .xbsj-title-ul {
+        // height: 54px;
+        background-color: #1A1B1D !important;
+        // li {
+        //   padding: 17px 20px !important;
+        // }
+    }
+}

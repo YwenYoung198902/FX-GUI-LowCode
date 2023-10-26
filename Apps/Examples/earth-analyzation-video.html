@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="xbsj-labels" content="Earth示例">
+    </meta>
+    <title>分析-视频融合</title>
+    <!-- 0 引入js文件：XbsjEarth.js和vue.min.js -->
+    <script src="../../XbsjCesium/Cesium.js"></script>
+    <link rel="stylesheet" href="../../XbsjCesium/Widgets/widgets.css">
+    <script src="../../XbsjEarth/XbsjEarth.js"></script>
+    <script src="scripts/vue.min.js"></script>
+    <style>
+        html,
+        body {
+            width: 100%;
+            height: 100%;
+            margin: 0px;
+            padding: 0px;
+        }
+
+        .defultbtn {
+            display: inline-block;
+            text-align: center;
+            min-width: 60px;
+            height: 38px;
+            padding: 0 10px;
+            line-height: 38px;
+            border-radius: 100px;
+            border: 1px solid #C9C9C9;
+            background-color: #FFF;
+            color: #555;
+            cursor: pointer;
+            margin-bottom: 4px;
+        }
+
+        .defultbtn:hover {
+            background-color: #b3daf8;
+        }
+
+        .btnon {
+            background-color: #1E9FFF;
+            color: #fff;
+            border: 1px solid #1E9FFF;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="vueApp" style="width:100%; height: 100%; background: grey; position: relative;">
+        <earth-comp></earth-comp>
+    </div>
+
+    <script>
+        // 1 创建Earth的vue组件
+        var EarthComp = {
+            template: `
+            <div style="width: 100%; height: 100%">
+                    <div ref="earthContainer" style="width: 100%; height: 100%">
+                    </div>
+                    <div class="box" style="position: absolute; left: 18px; top: 18px; color: white; background: rgba(0, 0, 0, 0.6); padding: 20px; border-radius: 25px;min-width:350px; font-size:24px; font-family: 宋体;">
+                        <div class="defultbtn" @click="setPositionWithCurrentCamera">设置为当前相机姿态</div>
+                        <div class="defultbtn" :class="{'btnon':twoPostionsEditing}"  @click="twoPostionsEditing = !twoPostionsEditing">拾取</div>
+                        <div class="defultbtn" :class="{'btnon':positionEditing}"  @click="positionEditing = !positionEditing">平移</div>
+                        <div class="defultbtn" :class="{'btnon':rotationEditing}"  @click="rotationEditing = !rotationEditing">旋转</div>
+                        <div class="defultbtn" :class="{'btnon':showHelper}"  @click="showHelper = !showHelper">辅助线</div>
+                        
+                        <div>视频url：<input type="text" style="width:400px;" v-model="videoUrl" /></div>
+                        <div>掩码url：<input type="text" style="width:400px;" v-model="maskUrl" /></div>
+                        <div>
+                            <span>经度：{{position[0] | numFilter2}}°</span> 
+                            <span>纬度：{{position[1] | numFilter2}}°</span> 
+                            <span>高度：{{position[2] | numFilter}}m</span> 
+                        </div>
+                        <div>
+                            <span>偏航角：{{rotation[0] | numFilter2}}度</span> 
+                            <span>俯仰角：{{rotation[1] | numFilter2}}度</span> 
+                            <span>翻滚角：{{rotation[2] | numFilter2}}度</span> 
+                        </div>
+                        <div>
+                            <span>近裁：<input type="text" v-model.number="near"></span><br/>    
+                            <span>远裁：<input type="text" v-model.number="far"></span><br/>    
+                        </div>
+                        <div>
+                            水平广角<span><input type="range" min="1" max="179" step="1" v-model.number="fovH" /></span><br/>
+                        </div>
+                        <div>
+                            垂直广角<span><input type="range" min="1" max="179" step="1" v-model.number="fovV" /></span><br/>
+                        </div>
+                        </div>
+                </div>
+            `,
+            data() {
+                return {
+                    twoPostionsEditing: true,
+                    positionEditing: true,
+                    rotationEditing: true,
+                    position: [0, 0, 0],
+                    rotation: [0, 0, 0],
+                    near: 0,
+                    far: 0,
+                    fovH: 0,
+                    fovV: 0,
+                    videoUrl: '',
+                    maskUrl: '',
+                    showHelper: true,
+                    _earth: undefined, // 注意：Earth和Cesium的相关变量放在vue中，必须使用下划线作为前缀！
+                };
+            },
+            // 1.1 资源加载
+            mounted() {
+                // 1.2.1 创建地球
+                var earth = new XE.Earth(this.$refs.earthContainer);
+
+                // 1.2.3 创建Tileset
+                earth.xbsjFromJSON({
+                    "sceneTree": {
+                        "root": {
+                            "children": [{
+                                "title": "项目2",
+                                "isSelected": true,
+                                "children": [{
+                                    "czmObject": {
+                                        "xbsjType": "Tileset",
+                                        "xbsjGuid": "b4137394-d346-4434-a01e-5b2d3730ec9f",
+                                        "name": "三维瓦片1x",
+                                        "url": "//lab.earthsdk.com/model/f15b9e90ac2d11e99dbd8fd044883638/tileset.json",
+                                        "lightColor": null,
+                                        "specularEnvironmentMaps": null,
+                                        "xbsjPosition": [
+                                            1.9016974701882112,
+                                            0.5972325152147303,
+                                            425.8641913624607
+                                        ],
+                                        "xbsjFlattenGuid": "93916e9b-82dd-4a56-b15e-27303b08e781",
+                                        "xbsjClippingPlanes": {},
+                                        "skipLevelOfDetail": false
+                                    }
+                                },
+                                {
+                                    "ref": "cameravideo",
+                                    "czmObject": {
+                                        "xbsjType": "CameraVideo",
+                                        "xbsjGuid": "19e84dea-2faa-4949-95c2-8d333a03e0c7",
+                                        "name": "视频融合1",
+                                        "videoUrl": "//www.earthsdk.com/v/last/XbsjEarthUI/assets/demo.mp4",
+                                        "maskUrl": "./images/cameraVideoMask.png",
+                                        "position": [
+                                            1.9017043698837766,
+                                            0.5972379094016695,
+                                            446.2499351617626
+                                        ],
+                                        "rotation": [
+                                            0.07413323656963833,
+                                            -0.933639537288121,
+                                            0.0003900191769634631
+                                        ],
+                                        "far": 50
+                                    }
+                                },
+                                {
+                                    "czmObject": {
+                                        "name": "默认离线影像",
+                                        "xbsjType": "Imagery",
+                                        "xbsjImageryProvider": {
+                                            "createTileMapServiceImageryProvider": {
+                                                "url": XE.HTML.cesiumDir + 'Assets/Textures/NaturalEarthII',
+                                                "fileExtension": 'jpg',
+                                            },
+                                            "type": "createTileMapServiceImageryProvider"
+                                        }
+                                    }
+                                },
+                                ]
+                            }]
+                        }
+                    },
+                    "cameraViewManager": {
+                        "lastView": {
+                            "position": [
+                                1.9017075410506683,
+                                0.5972352467498696,
+                                465.5130429801045
+                            ],
+                            "rotation": [
+                                5.8887642878142685,
+                                -0.8581361944659949,
+                                6.281345779298704
+                            ],
+                            "fov": 1.0471975511965976,
+                            "near": 0.1,
+                            "far": 10000000000
+                        }
+                    }
+                });
+                window.earth = earth; // only for Debug
+                window.cameravideo = earth.sceneTree.$refs.cameravideo.czmObject;
+                this._cameravideo = cameravideo;
+
+
+                // 1.1.5 数据绑定
+                // disposers 用来收集资源销毁函数，并在析构时自动调用！
+                {
+                    this._disposers = [];
+                    this._disposers.push(XE.MVVM.bind(this, 'twoPostionsEditing', cameravideo,
+                        'twoPostionsEditing'));
+                    this._disposers.push(XE.MVVM.bind(this, 'positionEditing', cameravideo, 'positionEditing'));
+                    this._disposers.push(XE.MVVM.bind(this, 'rotationEditing', cameravideo, 'rotationEditing'));
+                    this._disposers.push(XE.MVVM.bindPosition(this, 'position', cameravideo, 'position'));
+                    this._disposers.push(XE.MVVM.bindRotation(this, 'rotation', cameravideo, 'rotation'));
+                    this._disposers.push(XE.MVVM.bind(this, 'near', cameravideo, 'near'));
+                    this._disposers.push(XE.MVVM.bind(this, 'far', cameravideo, 'far'));
+                    this._disposers.push(XE.MVVM.bind(this, 'showHelper', cameravideo, 'showHelper'));
+                    this._disposers.push(XE.MVVM.bind(this, 'videoUrl', cameravideo, 'videoUrl'));
+                    this._disposers.push(XE.MVVM.bind(this, 'maskUrl', cameravideo, 'maskUrl'));
+                    this._disposers.push(XE.MVVM.bindDegreeRadian(this, 'fovH', cameravideo, 'fovH'));
+                    this._disposers.push(XE.MVVM.bindDegreeRadian(this, 'fovV', cameravideo, 'fovV'));
+                }
+                // 1.2.5 变量记录
+                this._earth = earth;
+            },
+            filters: {
+                numFilter(value) {
+                    // 截取当前数据到小数点后两位
+                    let realVal = parseFloat(value).toFixed(2)
+                    return realVal
+                },
+                numFilter2(value) {
+                    // 截取当前数据到小数点后五位
+                    let realVal = parseFloat(value).toFixed(5)
+                    return realVal
+                }
+            },
+            methods: {
+                setPositionWithCurrentCamera() {
+                    this._cameravideo && this._cameravideo.setPositionWithCurrentCamera();
+                }
+            },
+            // 1.2 资源销毁
+            beforeDestroy() {
+                // vue程序销毁时，需要清理相关资源
+                this._earth = this._earth && this._earth.destroy();
+            },
+        }
+
+        // 2 创建vue程序
+        // XE.ready()用来加载Cesium.js等相关资源
+        XE.ready().then(() => {
+            var app = new Vue({
+                el: '#vueApp',
+                components: {
+                    EarthComp,
+                },
+            });
+
+            // only for Debug
+            window.app = app;
+        });
+    </script>
+
+
+</body>
+
+</html>

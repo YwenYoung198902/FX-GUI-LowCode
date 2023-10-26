@@ -1,0 +1,101 @@
+.setting-panel_wrap {
+  position: relative;
+  z-index: 999;
+
+  .setting_panel-img {
+    position: absolute;
+    z-index: 99;
+    top: 0;
+    left: -32px;
+    cursor: pointer;
+  }
+
+  
+  .layer_management-img {
+    position: absolute;
+    z-index: 99;
+    top: 40px;
+    left: -32px;
+    cursor: pointer;
+  }
+
+  .setting-panel {
+    width: 340px;
+    height: calc(100%); 
+    background-color: #25262a;
+    border: 1px solid #0c0d0d;
+    border-top-width: 0px;
+    box-sizing: border-box;
+
+    &.hiddenSetting {
+      transform: translateX(340px);
+      width: 0px;
+    }
+
+    .panel-bar {
+      display: flex;
+
+      .bar-item {
+        cursor: pointer;
+        text-align: center;
+        height: 43px;
+        line-height: 43px;
+        flex: 1;
+        background-color: rgba(0, 0, 0, 0.3);
+        border-top: 2px solid rgba(0, 0, 0, 0.3);
+        border-bottom: 1px solid #0c0d0d;
+
+        &.active {
+          border-top: 2px solid #2879ff;
+          background-color: #25262a;
+        }
+      }
+    }
+
+    ::v-deep {
+      .el-form-item__label {
+        font-family: MicrosoftYaHei;
+        font-size: 14px;
+        font-weight: normal;
+        letter-spacing: 0em;
+        color: #FFFFFF;
+      }
+
+    }
+
+
+  }
+ 
+}
+  .componentName {
+    display: flex;
+    align-items: center;
+
+    .el-input {
+      flex: 1;
+    }
+
+    > span:nth-of-type(1) {
+      width: 20px;
+      height: 20px;
+      background-size: 100% 100%;
+      background-image: url('../../../assets/image/jiesuo.png');
+      cursor: pointer;
+
+      &.active {
+        background-image: url('../../../assets/image/suoding.png');
+      }
+    }
+
+    > span:nth-of-type(2) {
+      width: 20px;
+      height: 20px;
+      background-size: 100% 100%;
+      background-image: url('../../../assets/image/yanjing_yincang.png');
+      cursor: pointer;
+
+      &.active {
+        background-image: url('../../../assets/image/yanjing_xianshi.png');
+      }
+    }
+  }

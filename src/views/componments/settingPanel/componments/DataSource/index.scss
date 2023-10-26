@@ -1,0 +1,80 @@
+.jsoneditor-poweredBy,
+.jsoneditor-modes {
+  display: none;
+}
+
+.setting-panel {
+
+  .dataSourceType {
+    .el-radio {
+      margin-bottom: 10px;
+    }
+  }
+
+  .el-form-item.reportInput, .el-form-item.worksheetInput, .isOpenFieldMap {
+    display: flex;
+    margin-bottom: 0!important;
+  }
+
+  &.dataSource-wrap {
+    height: calc(100% - 40px);
+  }
+
+  .panel-bar {
+    .bar-item {
+      color: #ffffff;
+    }
+  }
+
+  .jsoneditor-vue {
+    height: 400px;
+  }
+
+  .jsoneditor-vue {
+    .jsoneditor-field {
+      color: #ffffff;
+    }
+  }
+
+  .el-form-item__label {
+    font-family: MicrosoftYaHei;
+    font-size: 14px;
+    font-weight: normal;
+    letter-spacing: 0em;
+    color: #ffffff;
+  }
+
+  .el-input__inner {
+    background-color: #191a1a;
+    color: #ffffff;
+    border: none;
+  }
+
+  .el-collapse {
+    border: none;
+
+    .el-collapse-item__header {
+      background-color: #25262a;
+      color: #ffffff;
+      border: none;
+    }
+
+    .el-collapse-item__content {
+      padding-bottom: 0;
+    }
+
+    .el-collapse-item__wrap {
+      background: #1c1c1f;
+      border: none;
+      padding: 10px;
+      box-sizing: border-box;
+
+      .el-input__inner {
+        background-color: #25262a;
+        color: #ffffff;
+        border: none;
+      }
+    }
+  }
+}
+

@@ -1,0 +1,70 @@
+.el-dialog__wrapper {
+    z-index: 99999 !important;
+
+    .sceneSelector {
+        z-index: 99999 !important;
+        .el-dialog__body {
+            padding: 0 20px;
+
+            .scene-selector_wrap {
+                .scene-list {
+                    display: flex;
+                    justify-content: space-between;
+                    flex-wrap: wrap;
+
+                    .scene-item {
+                        width: 276px;
+                        cursor: pointer;
+
+                        &:after {
+                            content: "";
+                            flex: auto;
+                        }
+
+                        .scene-item-img {
+                            border-radius: 10px;
+                            overflow: hidden;
+                            width: 100%;
+                            height: 155px;
+                            position: relative;
+
+                            .selected-icon {
+                                position: absolute;
+                                top: 0;
+                                left: 0;
+                                width: 48px;
+                                height: 24px;
+                                border-radius: 4px 0px 4px 0px;
+                                opacity: 1;
+                                background: #2879FF;
+                                color: #fff;
+                                display: flex;
+                                align-items: center;
+                                justify-content: center;
+                            }
+
+                            &.active {
+                                border: 1px solid #2879FF;
+                            }
+
+                            img {
+                                width: 100%;
+                            }
+                        }
+
+                        .scene-item-title {
+                            margin-top: 10px;
+                            font-family: Source Han Sans CN;
+                            font-size: 14px;
+                            font-weight: normal;
+                            letter-spacing: 0em;
+                            color: #999999;
+                            margin-bottom: 20px;
+                            text-align: center;
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

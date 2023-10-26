@@ -1,0 +1,133 @@
+{
+  "_args": [
+    [
+      "xbsj-renderer@0.1.31",
+      "D:\\项目\\earthUI"
+    ]
+  ],
+  "_from": "xbsj-renderer@0.1.31",
+  "_id": "xbsj-renderer@0.1.31",
+  "_inBundle": false,
+  "_integrity": "sha512-W1dF9WWHFwWhfR9HaOhlIY/EVja2yL9bQ4/w+gS9LYi6nDeNVaSkewiXjdEHi5YsttKkZSu2xLG4QqYiQb35Bw==",
+  "_location": "/xbsj-renderer",
+  "_phantomChildren": {
+    "@vue/compiler-dom": "3.2.31",
+    "@vue/compiler-sfc": "3.2.31",
+    "@vue/runtime-dom": "3.2.31",
+    "@vue/server-renderer": "3.2.31",
+    "@vue/shared": "3.2.31",
+    "decamelize": "1.2.0",
+    "get-caller-file": "2.0.5",
+    "inherits": "2.0.4",
+    "require-directory": "2.1.1",
+    "require-main-filename": "2.0.0",
+    "set-blocking": "2.0.0",
+    "string_decoder": "1.1.1",
+    "util-deprecate": "1.0.2",
+    "which-module": "2.0.0",
+    "y18n": "4.0.3"
+  },
+  "_requested": {
+    "type": "version",
+    "registry": true,
+    "raw": "xbsj-renderer@0.1.31",
+    "name": "xbsj-renderer",
+    "escapedName": "xbsj-renderer",
+    "rawSpec": "0.1.31",
+    "saveSpec": null,
+    "fetchSpec": "0.1.31"
+  },
+  "_requiredBy": [
+    "/"
+  ],
+  "_resolved": "https://registry.npmmirror.com/xbsj-renderer/-/xbsj-renderer-0.1.31.tgz",
+  "_spec": "0.1.31",
+  "_where": "D:\\项目\\earthUI",
+  "author": {
+    "name": "北京西部世界科技有限公司"
+  },
+  "dependencies": {
+    "@luma.gl/engine": "^8.2.0",
+    "@luma.gl/gltools": "^8.2.0",
+    "@luma.gl/shadertools": "^8.2.0",
+    "@luma.gl/webgl": "^8.2.0",
+    "@math.gl/culling": "^3.2.2",
+    "@math.gl/geospatial": "^3.2.2",
+    "@tsgl/webgl2-consts": "0.0.2",
+    "@types/node-fetch": "^2.5.7",
+    "@types/yargs": "^15.0.5",
+    "asciify-image": "^0.1.8",
+    "cesium": "^1.86.1",
+    "defaults": "^1.0.3",
+    "encoding": "^0.1.13",
+    "gl-matrix": "^3.3.0",
+    "js-binary-schema-parser": "^2.0.3",
+    "math.gl": "^3.2.2",
+    "node-fetch": "^2.6.0",
+    "rxjs": "^6.6.3",
+    "stream-browserify": "^3.0.0",
+    "vue": "^3.0.2",
+    "yargs": "^15.4.1"
+  },
+  "description": "",
+  "devDependencies": {
+    "@babel/runtime": "^7.12.0",
+    "@types/assert": "^1.5.1",
+    "@types/mocha": "^8.0.0",
+    "assert": "^2.0.0",
+    "clean-webpack-plugin": "^3.0.0",
+    "copy-webpack-plugin": "^5.0.4",
+    "cross-env": "^5.2.1",
+    "javascript-obfuscator": "^3.0.0",
+    "mkdirp": "^1.0.4",
+    "mocha": "^8.0.1",
+    "ncp": "^2.0.0",
+    "replace-bundle-webpack-plugin-webpack-5": "^1.0.0",
+    "rimraf": "^3.0.2",
+    "ts-loader": "^6.2.1",
+    "ts-node": "^8.10.2",
+    "typedoc": "^0.17.7",
+    "typescript": "^3.9.6",
+    "webpack": "^5.37.0",
+    "webpack-cli": "^4.7.0",
+    "webpack-core": "^0.6.9",
+    "webpack-dev-server": "^4.6.0",
+    "webpack-merge": "^4.2.2",
+    "webpack-obfuscator": "^3.5.0"
+  },
+  "directories": {
+    "test": "test"
+  },
+  "files": [
+    "dist-node/xr-utils",
+    "dist-node/xr-b3dmToGlb",
+    "dist-node/xr-math",
+    "dist-node/xr-cesium",
+    "dist-node/xr-static/workers",
+    "dist-web/xbsj.d.ts",
+    "dist-web/xr-utils.js",
+    "dist-web/xr-utils.d.ts",
+    "dist-web/_umd_xbsj_xr_utils.d.ts",
+    "dist-web/xr-math.js",
+    "dist-web/xr-math.d.ts",
+    "dist-web/_umd_xbsj_xr_math.d.ts",
+    "dist-web/xr-cesium.js",
+    "dist-web/xr-cesium.d.ts",
+    "dist-web/_umd_xbsj_xr_cesium.d.ts"
+  ],
+  "license": "ISC",
+  "main": "main.js",
+  "name": "xbsj-renderer",
+  "scripts": {
+    "build-node": "webpack --config ./tools/webpack-node/webpack.prod.js && ncp dist-node/src dist-node && ts-node tools/webpack-node/distReplace.ts -i ./dist-node",
+    "build-node-unminified": "webpack --config ./tools/webpack-node/webpack.prod.unminified.js && ncp dist-node/src dist-unminified-node && rimraf dist-node/src && rimraf dist-node/test && ts-node tools/webpack-node/distReplace.ts -i ./dist-unminified-node",
+    "build-web": "webpack --config ./tools/webpack-web/webpack.prod.js",
+    "build-web-unminified": "webpack --config ./tools/webpack-web/webpack.prod.unminified.js",
+    "dev-web": "webpack-dev-server --open --config ./tools/webpack-web/webpack.dev.js",
+    "doc": "typedoc --hideGenerator --readme README.md --target ES6 --module commonjs --includeDeclarations --excludeExternals --excludeNotExported --excludePrivate --mode file --out dist/docs/ src",
+    "login": "npm adduser --registry https://registry.npmjs.org",
+    "push": "npm publish --registry https://registry.npmjs.org",
+    "test": "mocha -r ts-node/register test/**/*"
+  },
+  "version": "0.1.31"
+}
