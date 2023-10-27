@@ -1,5 +1,7 @@
 # 数据孪生驾驶舱
+16：9驾驶舱
 ![6bcddf99a58d33bf68a8f3b6c5fda36b](https://github.com/skyinfor/FX-GUI-LowCode/assets/62418900/64bb459f-df12-4732-b2cb-0b9dc0dafdf1)
+32：9驾驶舱
 ![e2c89fc57e507379f8758363ea9645b4](https://github.com/skyinfor/FX-GUI-LowCode/assets/62418900/7980cba5-f026-459a-bd64-1118832b19d9)
 
 
